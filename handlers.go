@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/mitchellh/mapstructure"
@@ -179,6 +180,11 @@ func addMessage(client *Client, data interface{}) {
 	}
 
 	go func() {
+		channelMessage.Body = strings.TrimSpace(channelMessage.Body)
+		if len(channelMessage.Body) == 0 {
+			fmt.Println("Discarding empty message")
+			return
+		}
 		channelMessage.CreatedAt = time.Now()
 		channelMessage.Author = client.username
 		fmt.Printf("%#v\n", channelMessage)
