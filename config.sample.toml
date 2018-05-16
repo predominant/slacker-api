@@ -1,0 +1,6 @@
+port = 4000
+
+[database]
+host = "localhost"
+port = 28015
+name = "slacker"
