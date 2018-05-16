@@ -1,1 +1,6 @@
-{{toToml cfg}}
+port = {{cfg.port}}
+
+[database]
+host = "{{cfg.database.host}}"
+port = {{cfg.database.port}}
+name = "{{cfg.database.name}}"

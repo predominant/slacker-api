@@ -1,6 +1,7 @@
 pkg_name=slacker
 pkg_origin=predominant
 pkg_version="0.1.0"
+pkg_bin_dirs=(bin)
 pkg_scaffolding="core/scaffolding-go"
 scaffolding_go_build_deps=(
   github.com/BurntSushi/toml
