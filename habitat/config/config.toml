@@ -1,6 +1,11 @@
-port = {{cfg.port}}
+Port = {{cfg.port}}
 
 [database]
-host = "{{cfg.database.host}}"
-port = {{cfg.database.port}}
-name = "{{cfg.database.name}}"
+Name = "{{cfg.database.name}}"
+{{#if bind.database ~}}
+Host = "{{bind.database.first.sys.ip}}"
+Port = {{bind.database.first.cfg.driver-port}}
+{{else ~}}
+Host = "{{cfg.database.host}}"
+Port = {{cfg.database.port}}
+{{/if ~}}

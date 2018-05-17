@@ -1,6 +1,6 @@
-pkg_name=slacker
+pkg_name=slacker-api
 pkg_origin=predominant
-pkg_version="0.1.0"
+pkg_version="0.2.0"
 pkg_bin_dirs=(bin)
 pkg_scaffolding="core/scaffolding-go"
 scaffolding_go_build_deps=(
@@ -14,5 +14,5 @@ pkg_exports=(
 )
 pkg_exposes=(port)
 pkg_binds_optional=(
-  [database]="host port"
+  [database]="driver-port"
 )

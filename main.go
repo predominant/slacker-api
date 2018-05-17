@@ -11,15 +11,6 @@ import (
 	r "gopkg.in/gorethink/gorethink.v4"
 )
 
-// var Config = struct {
-// 	Port     uint `default:"4000"`
-// 	Database struct {
-// 		Host string `default:"localhost"`
-// 		Port uint   `default:"28015"`
-// 		Name string `default:"slacker"`
-// 	}
-// }{}
-
 func main() {
 	configFilePtr := flag.String("config", "config.toml", "Configuration file")
 	flag.Parse()
@@ -43,11 +34,64 @@ func main() {
 	config := Config{}
 	toml.Unmarshal(configData, &config)
 
-	fmt.Println("[Rethink] Connecting...")
+	fmt.Println(
+		"[Rethink] Connecting...",
+		fmt.Sprintf("%s:%d", config.Database.Host, config.Database.Port),
+		"/",
+		config.Database.Name)
 	session, err := r.Connect(r.ConnectOpts{
 		Address:  fmt.Sprintf("%s:%d", config.Database.Host, config.Database.Port),
 		Database: config.Database.Name,
 	})
+	if err != nil {
+		log.Panic(err.Error())
+	}
+
+	// Create the database(if not existing already)
+	err = r.DBList().
+		Contains(config.Database.Name).
+		Do(func(dbExists r.Term) r.Term {
+			return r.Branch(
+				dbExists,
+				map[string]uint{"dbs_created": 0},
+				r.DBCreate(config.Database.Name))
+		}).
+		Exec(session)
+	if err != nil {
+		log.Panic(err.Error())
+	}
+
+	// Create tables
+	tables := []string{"user", "room", "message"}
+	for _, tableName := range tables {
+		err = r.TableList().
+			Contains(tableName).
+			Do(func(tableExists r.Term) r.Term {
+				return r.Branch(
+					tableExists,
+					map[string]uint{"tables_created": 0},
+					r.TableCreate(tableName))
+			}).
+			Exec(session)
+		if err != nil {
+			log.Panic(err.Error())
+		}
+	}
+
+	// Create Default Room
+	err = r.Table("room").
+		Filter(map[string]bool{"default": true}).
+		Count().
+		Do(func(numTables r.Term) r.Term {
+			return r.Branch(
+				r.Ge(numTables, 1),
+				map[string]uint{"something": 0},
+				r.Table("room").Insert(map[string]interface{}{
+					"name":    "general",
+					"default": true,
+				}))
+		}).
+		Exec(session)
 	if err != nil {
 		log.Panic(err.Error())
 	}
