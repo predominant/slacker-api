@@ -78,6 +78,12 @@ func main() {
 		}
 	}
 
+	// Create Indicies
+	r.Table("channel").IndexCreate("name").Exec(session)
+	r.Table("user").IndexCreate("name").Exec(session)
+	r.Table("message").IndexCreate("createdAt").Exec(session)
+	r.Table("message").IndexCreate("roomId").Exec(session)
+
 	// Create Default Room
 	err = r.Table("room").
 		Filter(map[string]bool{"default": true}).

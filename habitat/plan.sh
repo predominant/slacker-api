@@ -1,6 +1,6 @@
 pkg_name=slacker-api
 pkg_origin=predominant
-pkg_version="0.2.0"
+pkg_version="0.2.1"
 pkg_bin_dirs=(bin)
 pkg_scaffolding="core/scaffolding-go"
 scaffolding_go_build_deps=(
